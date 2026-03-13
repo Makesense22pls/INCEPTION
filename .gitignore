@@ -1,0 +1,19 @@
+# Secrets (CRITIQUE pour 42)
+.env
+srcs/.env
+
+# Données locales (Volume Bind Mounts)
+data/
+srcs/data/
+db/
+wordpress/
+
+# Fichiers temporaires et logs
+*.log
+*.swp
+.DS_Store
+.docker/
+
+# Divers
+.idea/
+.vscode/
