@@ -5,6 +5,7 @@ services:
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
+      network: host            # <--- Ajouté ici
     container_name: mariadb
     env_file:
       - .env
@@ -18,6 +19,7 @@ services:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
+      network: host            # <--- Ajouté ici
     container_name: wordpress
     env_file:
       - .env
@@ -33,6 +35,7 @@ services:
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
+      network: host            # <--- Ajouté ici
     container_name: nginx
     env_file:
       - .env
