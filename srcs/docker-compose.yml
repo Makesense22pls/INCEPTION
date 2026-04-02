@@ -1,53 +1,68 @@
-version: '3.8'
-
 services:
   mariadb:
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
-      network: host            # <--- Ajouté ici
     container_name: mariadb
     env_file:
       - .env
     volumes:
-      - /home/mafourni/data/mariadb:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception
-    restart: always
+    restart: unless-stopped
+    expose:
+      - "3306"
 
   wordpress:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-      network: host            # <--- Ajouté ici
     container_name: wordpress
     env_file:
       - .env
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_started
     volumes:
-      - /home/mafourni/data/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception
-    restart: always
+    restart: on-failure
+    expose:
+      - "9000"
 
   nginx:
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
-      network: host            # <--- Ajouté ici
     container_name: nginx
     env_file:
       - .env
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_started
     ports:
       - "443:443"
     volumes:
-      - /home/mafourni/data/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception
-    restart: always
+    restart: on-failure
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mafourni/data/mariadb
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mafourni/data/wordpress
 
 networks:
   inception:

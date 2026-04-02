@@ -1,25 +1,25 @@
-FROM debian:bookworm
+FROM alpine:3.19
 
-# --- FIX RÉSEAU 42 ---
-# Force l'IPv4 car l'IPv6 de l'école fait souvent timeout sur Docker
-RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
+# --- FIX FOR 42 NETWORK (Future system date) ---
+RUN echo "Alpine apk config" && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories
 
 # --- INSTALLATION ---
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    mariadb-server \
-    netcat-openbsd && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update --no-cache && \
+    apk add --no-cache --allow-untrusted \
+    mariadb \
+    mariadb-client \
+    netcat-openbsd \
+    bash
 
 # --- CONFIGURATION ---
-# Autorise MariaDB à écouter sur toutes les interfaces (nécessaire pour Docker)
-RUN sed -i "s|127.0.0.1|0.0.0.0|g" /etc/mysql/mariadb.conf.d/50-server.cnf
-
-# Création du dossier pour le socket MySQL avec les bons droits
 RUN mkdir -p /var/run/mysqld && \
     chown -R mysql:mysql /var/run/mysqld && \
     chmod 777 /var/run/mysqld
+
+# Copier le fichier de configuration
+COPY conf/50-server.cnf /etc/my.cnf
 
 # --- SCRIPT D'INITIALISATION ---
 COPY tools/mdb-conf.sh /usr/local/bin/mdb-conf.sh
