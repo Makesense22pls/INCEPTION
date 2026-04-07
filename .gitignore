@@ -2,7 +2,6 @@
 data/
 srcs/data/
 db/
-wordpress/
 
 *.log
 *.swp
