@@ -1,7 +1,4 @@
 
-.env
-srcs/.env
-
 data/
 srcs/data/
 db/
