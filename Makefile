@@ -1,4 +1,3 @@
-# Chemins vers les dossiers de données
 DATA_PATH = /home/mafourni/data
 
 all:
@@ -21,5 +20,3 @@ fclean:
 	@echo "L'infrastructure et les volumes ont été supprimés."
 
 re: fclean all
-
-.PHONY: all stop clean fclean re

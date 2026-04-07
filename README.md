@@ -52,6 +52,8 @@ Inception/
 │           ├── Dockerfile
 │           ├── conf/
 │           └── tools/wp-setup.sh
+|────────USER_DOC.md
+|────────DEV_DOC.md
 ```
 
 ## Docker and Project Overview

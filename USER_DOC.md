@@ -1,4 +1,4 @@
-# User Documentation - Inception Website
+# User Documentation
 
 ## Overview
 
@@ -31,20 +31,40 @@ echo "127.0.0.1 mafourni.42.fr" | sudo tee -a /etc/hosts
 
 | Account | Username | Password/Email |
 |---------|----------|----------------|
-| Admin | `mafourni-wp` | `mafourni42` |
-| User | `mafourni-worker` | `worker@student.42.fr` |
-
-## Managing Credentials
-
-Credentials stored in `srcs/.env`:
-
-```
-MYSQL_USER=mafourni-db-user
-MYSQL_PASSWORD=mafourni42
-MYSQL_ROOT_PASSWORD=mafourni42
-```
+| Admin | `mafourni-wp` | 
+| User | `mafourni-worker`  |
 
 **To change:** Edit `srcs/.env`, then run `make fclean` and `make`. ⚠️ This deletes all data.
+
+## Changing the Port
+
+**Default:** Port 443 (HTTPS)
+
+**To change the port:**
+
+1. Edit `srcs/docker-compose.yml`
+2. Find the `nginx` service and the `ports` section
+3. Change `"443:443"` to your desired port (e.g., `"8443:443"`)
+4. Rebuild and restart:
+
+```sh
+make re
+```
+
+5. Access the website on the new port:
+
+```sh
+curl -k https://localhost:8443
+```
+
+**Example:** Changing to port 8443:
+```yaml
+nginx:
+  ports:
+    - "8443:443"  # Changed from "443:443"
+```
+
+After `make re`, access via `https://mafourni.42.fr:8443` (add domain to `/etc/hosts` if needed).
 
 ## Data Persistence
 
@@ -60,6 +80,8 @@ Data persists after `make stop`. Deleted only with `make fclean`.
 ```sh
 docker ps
 ```
+**CHECK TLS**
+curl -v -k https://mafourni.42.fr 2>&1 | grep "TLSv"
 
 Should show: `mariadb`, `wordpress`, `nginx`
 
@@ -70,8 +92,18 @@ docker compose -f srcs/docker-compose.yml logs -f [service_name]
 
 **Test database:**
 ```sh
-docker exec -it mariadb mysql -u mafourni-db-user -p inception_db
-# Password: mafourni42
+# Se connecter
+docker exec -it mariadb mysql -u root -p
+
+# Taper le mot de passe
+# Puis dans le shell MariaDB :
+
+SHOW DATABASES;
+USE wordpress;
+SHOW TABLES;
+
+# Quitter
+exit;
 ```
 
 **Test website:**
